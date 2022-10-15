@@ -1,0 +1,80 @@
+Sub Stock()
+Dim WS_Counter, Ticker_Counter As Integer
+Dim year_start, year_end, grt_inc, grt_dec As Double
+Dim volume, grt_volume As LongLong
+Dim Ticker, grt_inc_tick, grt_dec_tick, grt_volume_tick As String
+
+WS_Count = ActiveWorkbook.Worksheets.Count
+Ticker_Counter = 2
+grt_inc_tick = 0
+grt_inc = 0
+grt_dec_tick = 0
+grt_dec = 0
+grt_volume_tick = 0
+grt_volume = 0
+
+For I = 1 To WS_Count
+
+ For j = 2 To 800000
+    
+        If j = 2 Then
+            Ticker = Sheets(I).Cells(j, 1).Value
+            year_start = Sheets(I).Cells(j, 3).Value
+            volume = Sheets(I).Cells(j, 7).Value
+            
+        ElseIf Sheets(I).Cells(j, 1) <> Ticker Then
+            ' Display Calcs
+            year_end = Sheets(I).Cells(j - 1, 6).Value
+            Sheets(I).Cells(Ticker_Counter, 9) = Ticker
+            Sheets(I).Cells(Ticker_Counter, 10) = year_end - year_start
+            Sheets(I).Cells(Ticker_Counter, 11) = (year_end - year_start) / year_start
+            
+                ' For Bonus
+                If ((year_end - year_start) / year_start) > grt_inc Then
+                    grt_inc = (year_end - year_start) / year_start
+                    grt_inc_tick = Ticker
+                End If
+                If ((year_end - year_start) / year_start) < grt_dec Then
+                    grt_dec = (year_end - year_start) / year_start
+                    grt_dec_tick = Ticker
+                End If
+                
+            Sheets(I).Cells(Ticker_Counter, 12) = volume
+                
+                ' For Bonus
+                If volume > grt_volume Then
+                    grt_volume = volume
+                    grt_volume_tick = Ticker
+                End If
+                
+            Ticker_Counter = Ticker_Counter + 1
+            
+            ' Reset Values
+            year_start = Sheets(I).Cells(j, 3).Value
+            Ticker = Sheets(I).Cells(j, 1).Value
+            volume = Sheets(I).Cells(j, 7).Value
+        ElseIf Sheets(I).Cells(j, 1) = Ticker Then
+            volume = volume + Sheets(I).Cells(j, 7).Value
+        End If
+    
+ Next j
+    
+    ' For Bonus
+    Sheets(I).Range("P2") = grt_inc_tick
+    Sheets(I).Range("Q2") = grt_inc
+    Sheets(I).Range("P3") = grt_dec_tick
+    Sheets(I).Range("Q3") = grt_dec
+    Sheets(I).Range("P4") = grt_volume_tick
+    Sheets(I).Range("Q4") = grt_volume
+    
+    ' Reset for different sheets
+    Ticker_Counter = 2
+    grt_inc_tick = 0
+    grt_inc = 0
+    grt_dec_tick = 0
+    grt_dec = 0
+    grt_volume_tick = 0
+    grt_volume = 0
+Next I
+
+End Sub
